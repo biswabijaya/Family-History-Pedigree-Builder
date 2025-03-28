@@ -1,11 +1,24 @@
-import React from 'react';
+// import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import QuestionnairePage from '../pages/QuestionnairePage';
+import Dashboard from '../pages/Dashboard';
+
+import { useAuth } from '../context/AuthContext';
+import Login from '../pages/Login';
 
 const Router = () => {
+  const { user } = useAuth();
+
   return (
     <Routes>
-      <Route path="/" element={<QuestionnairePage />} />
+      {user ? (
+        <>
+          <Route path="/" element={<QuestionnairePage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </>
+      ) : (
+        <Route path="*" element={<Login />} />
+      )}
     </Routes>
   );
 };
