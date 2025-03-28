@@ -1,0 +1,23 @@
+rules_version = '2';
+// This rule allows authenticated users to create a questionnaire document
+// and restricts access to only the user who created it.
+// It also includes an optional admin access rule for full read/write access.
+// The admin access rule is commented out but can be enabled if needed.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Allow only authenticated users
+    match /questionnaires/{docId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+
+      // Allow read/update/delete only if user owns the document
+      allow read, update, delete: if request.auth != null &&
+        resource.data.userId == request.auth.uid;
+    }
+
+    // (Optional) Admin access for full read/write if role is 'admin'
+    // match /questionnaires/{docId} {
+    //   allow read, write: if request.auth.token.role == 'admin';
+    // }
+  }
+}
